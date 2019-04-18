@@ -160,7 +160,8 @@
                 web3 = new Web3(web3.currentProvider);
             } else {
                 // set the provider you want from Web3.providers
-                web3 = new Web3(new Web3.providers.HttpProvider(ethNetworkUrl));
+                console.log(mchMetaMarkingAddress);
+                web3 = new Web3(new Web3.providers.HttpProvider(ethNetWorkUrl));
             }
             console.log('web3: ', web3);
             if (web3) {
