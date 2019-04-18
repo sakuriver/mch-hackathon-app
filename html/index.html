@@ -106,6 +106,7 @@
             console.log("searchStart");
             var ownerAddress = $("#ownerAddress").val();
             var now = new Date();
+            getUserProfileData(ownerAddress);
             getHeroListFromOwnerAddress(ownerAddress);
             console.log("searchEnd");
             return false;
@@ -127,7 +128,7 @@
                 console.log(err);
                 console.log(result);   
                 data = connectServerGetMethod(result);
-                if data != undefined {
+                if (typeof data !== 'undefined') {
                     divString = '<div id="token-data-' + data.attributes.id + '"><div>';
                     divString += data.name + '</div>';
                     divString += '<img  src="' + data.image + '" width="80" height="80"/>' + '</div>';
@@ -142,11 +143,12 @@
         // サイドチェーンから、プロフィール情報を取得する
         function getUserProfileData(ethAddress) {
             userProfileUrl = sideChainEndPointUrl + "users/" + ethAddress;
+            console.log(userProfileUrl);
             connectServerGetMethod(userProfileUrl);
         }
 
         // GET通信を実施する
-        function connectServerGetMethod(apiUrl string) {
+        function connectServerGetMethod(apiUrl) {
                 $.ajax({  
                     url:apiUrl, // 通信先のURL
                     type:"GET",    // 使用するHTTPメソッド
@@ -155,7 +157,7 @@
                     crossDomain: true,
                     timespan:1000     // 通信のタイムアウトの設定(ミリ秒)
                 }).done(function(data, textStatus, jqXHR) {
-                    console.log(data.name);
+                    console.log(data);
                    
                     return data;
                     // 6. failは、通信に失敗した時に実行される
