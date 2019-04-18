@@ -126,8 +126,29 @@
             heroAsset.tokenURI(tokenId, (err, result) =>{
                 console.log(err);
                 console.log(result);   
+                data = connectServerGetMethod(result);
+                if data != undefined {
+                    divString = '<div id="token-data-' + data.attributes.id + '"><div>';
+                    divString += data.name + '</div>';
+                    divString += '<img  src="' + data.image + '" width="80" height="80"/>' + '</div>';
+                    console.log(divString);
+                    var div = $(divString);
+                    $("#hero-result").append(div);
+                }
+                return data
+            });
+        }
+
+        // サイドチェーンから、プロフィール情報を取得する
+        function getUserProfileData(ethAddress) {
+            userProfileUrl = sideChainEndPointUrl + "users/" + ethAddress;
+            connectServerGetMethod(userProfileUrl);
+        }
+
+        // GET通信を実施する
+        function connectServerGetMethod(apiUrl string) {
                 $.ajax({  
-                    url:result, // 通信先のURL
+                    url:apiUrl, // 通信先のURL
                     type:"GET",    // 使用するHTTPメソッド
                     dataType : 'JSON',                  
                     scriptCharset: 'utf-8', 
@@ -135,13 +156,7 @@
                     timespan:1000     // 通信のタイムアウトの設定(ミリ秒)
                 }).done(function(data, textStatus, jqXHR) {
                     console.log(data.name);
-                    divString = '<div id="token-data-' + data.attributes.id + '"><div>';
-                    divString += data.name + '</div>';
-                    divString += '<img  src="' + data.image + '" width="80" height="80"/>' + '</div>';
-                    console.log(divString);
-
-                    var div = $(divString);
-                    $("#hero-result").append(div);
+                   
                     return data;
                     // 6. failは、通信に失敗した時に実行される
                 }).fail(function(jqXHR, textStatus, errorThrown ) {
@@ -151,8 +166,7 @@
                 }).always(function(){
                         
                 });
-                return {}
-            });
+                return undefined;
         }
 
         window.addEventListener('load', function() {
