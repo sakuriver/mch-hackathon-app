@@ -76,18 +76,6 @@
         }
 
 
-        // コントラクトに実装されているBalanceOfメソッド叩く
-        function callBalanceOf() {
-/*            web3js.eth.getBalance(userAccount, (err, balanceWei) => {
-              if (err) {
-                    console.log(`Error userAccountBalance: ${err}`);
-                } else {
-                    const balance = web3.fromWei(balanceWei, "ether");
-                    $("#eth-num").text(balance);
-                }
-            });*/
-        }
-
         function startApp() {
             console.log("app start");
 
@@ -113,7 +101,7 @@
             console.log("app end");
 
         }
-        // transferを叩いて、レースを登録する
+        // 英雄及びプレイヤー情報を検索する
         $("#hero-search-form").submit(function(){
             console.log("searchStart");
             var ownerAddress = $("#ownerAddress").val();
@@ -121,7 +109,7 @@
             getHeroListFromOwnerAddress(ownerAddress);
             console.log("searchEnd");
             return false;
-        });        
+        });
         function getHeroListFromOwnerAddress(ownerAddress) {
             heroAsset.balanceOf(ownerAddress, (err, result) =>{
                 console.log(err);
