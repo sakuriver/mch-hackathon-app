@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mch Tool</title>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
+    <script src="../js/extension_asset_abi.js"></script>
+    <script src="../js/hero_asset_abi.js"></script>
+    <script src="../js/land_sector_asset_abi.js"></script>
+    <script src="../js/mch_meta_marking_abi.js"></script>
+    <script src="../js/app_config.js"></script>
+  </head>
+  <body>
+    <div id="message">
+      <h1>MchHackツール</h1>
+      <div> 
+        <h2>アドレス別ヒーロー一覧</h2>
+        <form id="hero-search-form" method="" action="">
+          <p>
+            <label><span>Id</span>
+              <input type="text" name="ownerAddress" id="ownerAddress" class="txtfiled" placeholder="検索アドレス">
+            </label>
+          </p>          
+          <button type="submit">検索</button>
+        </form>
+        <div id="hero-result">
+        </div>
+      </div>  
+    </div>
+
+    <script>
+        let web3js;
+        let extensionAsset;
+        let heroAsset;
+        let landSectorAsset;
+        let mchMetaMarking;
+
+        // エクステンションコントラクトを取得する
+        function getExtensionAssetContract() {
+            const abi = extensionAssetAbi;
+            // Todo : abiはサーバーとアドレスはサーバーから取得できるようにするのが自然かと思われる
+            const contractAddress = extensionAssetAddress;
+            const contract = web3js.eth.contract(abi).at(contractAddress);
+            return contract;
+        }
+
+
+        function getHeroAssetContract() {
+            const abi = heroAssetAbi;
+            // Todo : abiはサーバーとアドレスはサーバーから取得できるようにするのが自然かと思われる
+            const contractAddress = heroAssetAddress;
+            const contract = web3js.eth.contract(abi).at(contractAddress);
+            return contract;
+        }
+
+        function getLandSectorAssetContract() {
+            const abi = landSectorAssetAbi;
+            // Todo : abiはサーバーとアドレスはサーバーから取得できるようにするのが自然かと思われる
+            const contractAddress = landSectorAssetAddress;
+            const contract = web3js.eth.contract(abi).at(contractAddress);
+            return contract;
+        }
+
+        function getMchMetaMarkingContract() {
+            const abi = mchMetaMarkingAbi;
+            // Todo : abiはサーバーとアドレスはサーバーから取得できるようにするのが自然かと思われる
+            const contractAddress = mchMetaMarkingAddress;
+            const contract = web3js.eth.contract(abi).at(contractAddress);
+            return contract;
+        }
+
+
+        // コントラクトに実装されているBalanceOfメソッド叩く
+        function callBalanceOf() {
+/*            web3js.eth.getBalance(userAccount, (err, balanceWei) => {
+              if (err) {
+                    console.log(`Error userAccountBalance: ${err}`);
+                } else {
+                    const balance = web3.fromWei(balanceWei, "ether");
+                    $("#eth-num").text(balance);
+                }
+            });*/
+        }
+
+        function startApp() {
+            console.log("app start");
+
+            // ユーザーアカウントの取得
+            web3js.eth.getAccounts(function(error, accounts) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log("accounts complete");
+                }
+               // userAccount = accounts[0];
+               // $("#login-address").text(userAccount);
+              // contractのxxxxを叩いて動作確認
+              extensionAsset = getExtensionAssetContract();
+              heroAsset = getHeroAssetContract();
+              landSectorAsset = getLandSectorAssetContract();
+              mchMetaMarking = getMchMetaMarkingContract();
+              console.log(heroAsset.methods);
+              console.log(heroAsset.tokenURI);
+              
+            });
+
+            console.log("app end");
+
+        }
+        // transferを叩いて、レースを登録する
+        $("#hero-search-form").submit(function(){
+            console.log("searchStart");
+            var ownerAddress = $("#ownerAddress").val();
+            var now = new Date();
+            getHeroListFromOwnerAddress(ownerAddress);
+            console.log("searchEnd");
+            return false;
+        });        
+        function getHeroListFromOwnerAddress(ownerAddress) {
+            heroAsset.balanceOf(ownerAddress, (err, result) =>{
+                console.log(err);
+                console.log(result);
+                for (var i = 0; i < result.c[0];  i++) {
+                  heroAsset.tokenOfOwnerByIndex(ownerAddress, i, (err, result) => {
+                      getTokenData(result.c[0]);
+                  });
+                }
+            });
+        }        
+
+        function getTokenData(tokenId) {
+            heroAsset.tokenURI(tokenId, (err, result) =>{
+                console.log(err);
+                console.log(result);   
+                $.ajax({  
+                    url:result, // 通信先のURL
+                    type:"GET",    // 使用するHTTPメソッド
+                    dataType : 'JSON',                  
+                    scriptCharset: 'utf-8', 
+                    crossDomain: true,
+                    timespan:1000     // 通信のタイムアウトの設定(ミリ秒)
+                }).done(function(data, textStatus, jqXHR) {
+                    console.log(data.name);
+                    divString = '<div id="token-data-' + data.attributes.id + '"><div>';
+                    divString += data.name + '</div>';
+                    divString += '<img  src="' + data.image + '" width="80" height="80"/>' + '</div>';
+                    console.log(divString);
+
+                    var div = $(divString);
+                    $("#hero-result").append(div);
+                    return data;
+                    // 6. failは、通信に失敗した時に実行される
+                }).fail(function(jqXHR, textStatus, errorThrown ) {
+                    console.log(jqXHR);
+
+                    // 7. alwaysは、成功/失敗に関わらず実行される
+                }).always(function(){
+                        
+                });
+                return {}
+            });
+        }
+
+        window.addEventListener('load', function() {
+            if (typeof web3 !== 'undefined') {
+                web3 = new Web3(web3.currentProvider);
+            } else {
+                // set the provider you want from Web3.providers
+                web3 = new Web3(new Web3.providers.HttpProvider(ethNetworkUrl));
+            }
+            console.log('web3: ', web3);
+            if (web3) {
+                web3js = web3;
+            }
+            console.log('web3js: ', web3js);
+
+            startApp();
+        });       
+    </script>
+  </body>
+</html>
