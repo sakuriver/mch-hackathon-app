@@ -77,27 +77,46 @@
         $("#hero-search-form").submit(function(){
             console.log("searchStart");
             var ownerAddress = $("#ownerAddress").val();
+            var uid = $("#uid").val();
+
             var now = new Date();
-            getUserProfileData(ownerAddress);
+            getUserProfileData(ownerAddress, uid);
             console.log("searchEnd");
             return false;
         });
 
         // サイドチェーンから、プロフィール情報を取得する
-        function getUserProfileData(ethAddress) {
+        function getUserProfileData(ethAddress, uid) {
             userProfileUrl = sideChainEndPointUrl + "users/" + ethAddress;
             console.log(userProfileUrl);
 
-            profileData = connectServerGetMethod(userProfileUrl);
-            if (typeof data === 'undefined') {
-                //
+            
+            var getDataCallBack = function (data, textStatus, jqXHR) {
+                if (typeof data === 'undefined') {
+                    //
+                    loginCheckError();
+                    return
+                } else {
+                   console.log(data);
+                   console.log(uid);
+                   console.log(data.uid);
+                   if (uid != data.uid) {
+                        // 認証情報不一致
+                        loginCheckError();
+                        return;
+                   }
+                   $.cookie("uid", data.uid, { expires: 7 });
+                   $.cookie("ethAddress", ethAddress, { expires: 7 });
+                   window.location.href = '/index.html';
+                   // 入力情報が一致しているかを確認する
+                }
+            };
+            var getDataFailCallBack = function (data, textStatus, jqXHR) {
                 loginCheckError();
-                return
-            } else {
-               console.log(profileData);
-               // 入力情報が一致しているかを確認する
-
-            }
+                return;
+            };            
+            connectServerGetMethod(userProfileUrl, getDataCallBack, getDataFailCallBack);
+            
         }
 
         window.addEventListener('load', function() {
