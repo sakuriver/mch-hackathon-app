@@ -15,6 +15,7 @@
     <script src="./js/land_sector_asset_abi.js"></script>
     <script src="./js/mch_meta_marking_abi.js"></script>
     <script src="./js/app_config.js"></script>
+    <script src="./js/land_logic.js"></script>
     <script src="./js/network.js"></script>
   </head>
   <body>
@@ -73,8 +74,6 @@
 
         function startApp() {
             console.log("app start");
-            console.log($.cookie("landType"));
-            console.log($.cookie("landSince"));
 
             // ユーザーアカウントの取得
             web3js.eth.getAccounts(function(error, accounts) {
@@ -90,11 +89,13 @@
               heroAsset = getHeroAssetContract();
               landSectorAsset = getLandSectorAssetContract();
               mchMetaMarking = getMchMetaMarkingContract();
+              landType = $.cookie("landType");
+              landSince = $.cookie("landSince");
+              $("#land-name").html(getLandNameByLandType(landType));
+              getUserListFromLand(landType, landSince);
               console.log(heroAsset.methods);
               console.log(heroAsset.tokenURI);
-              
             });
-
             console.log("app end");
 
         }
@@ -108,15 +109,10 @@
             console.log("searchEnd");
             return false;
         });
-        function getHeroListFromOwnerAddress(ownerAddress) {
-            heroAsset.balanceOf(ownerAddress, (err, result) =>{
+        function getUserListFromLand(landType, landSince) {
+            mchMetaMarking.getAddressesByLandType(landType, landSince, (err, result) =>{
                 console.log(err);
                 console.log(result);
-                for (var i = 0; i < result.c[0];  i++) {
-                  heroAsset.tokenOfOwnerByIndex(ownerAddress, i, (err, result) => {
-                      getTokenData(result.c[0]);
-                  });
-                }
             });
         }        
 
