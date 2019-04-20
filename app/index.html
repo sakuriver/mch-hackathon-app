@@ -15,6 +15,7 @@
     <script src="./js/land_sector_asset_abi.js"></script>
     <script src="./js/mch_meta_marking_abi.js"></script>
     <script src="./js/app_config.js"></script>
+    <script src="./js/network.js"></script>
   </head>
   <body>
     <div id="message">
@@ -127,7 +128,7 @@
             heroAsset.tokenURI(tokenId, (err, result) =>{
                 console.log(err);
                 console.log(result);   
-                data = connectServerGetMethod(result);
+                data = connectServerGetMethod(result, getDataCallBack);
                 if (typeof data !== 'undefined') {
                     divString = '<div id="token-data-' + data.attributes.id + '"><div>';
                     divString += data.name + '</div>';
@@ -144,32 +145,14 @@
         function getUserProfileData(ethAddress) {
             userProfileUrl = sideChainEndPointUrl + "users/" + ethAddress;
             console.log(userProfileUrl);
-            connectServerGetMethod(userProfileUrl);
+            connectServerGetMethod(userProfileUrl, getDataCallBack);
         }
 
-        // GET通信を実施する
-        function connectServerGetMethod(apiUrl) {
-                $.ajax({  
-                    url:apiUrl, // 通信先のURL
-                    type:"GET",    // 使用するHTTPメソッド
-                    dataType : 'JSON',                  
-                    scriptCharset: 'utf-8', 
-                    crossDomain: true,
-                    timespan:1000     // 通信のタイムアウトの設定(ミリ秒)
-                }).done(function(data, textStatus, jqXHR) {
-                    console.log(data);
-                   
-                    return data;
-                    // 6. failは、通信に失敗した時に実行される
-                }).fail(function(jqXHR, textStatus, errorThrown ) {
-                    console.log(jqXHR);
-
-                    // 7. alwaysは、成功/失敗に関わらず実行される
-                }).always(function(){
-                        
-                });
-                return undefined;
+        var getDataCallBack = function (data, textStatus, jqXHR) {
+            console.log(data);
+            return data;
         }
+
 
         window.addEventListener('load', function() {
             if (typeof web3 !== 'undefined') {

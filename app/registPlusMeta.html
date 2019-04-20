@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>マイクリハッカソン ヒーローへのパラメータ追加</title>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#response").html("結果表示エリア");
+
+        $("#view").click( function(){
+            var url = "https://www.mycryptoheroes.net/experimental-api/plusmeta/heroes/" + $("#heroid").val();
+
+            $.ajax({
+                type : 'get',
+                url : url,
+                dataType : 'json',
+                success : function(data) {
+                    // Success
+                    alert("success");
+                    var hackathon_online_team = "";
+                    // 入力した実行者のアドレスとissが一致するものを表示する
+                    for (var i = 0; i < data.issues.length; i++) {
+                        var issue = data.issues[i];
+                        if (issue.iss != $("#iss").val()) {
+                            continue;
+                        }
+                        hackathon_online_team = JSON.stringify(issue.metadata.attributes.hackathon_online_team);
+                        break;
+                    }
+                    $("#response").html("パラメータ(hackathon_online_team): " + hackathon_online_team + "\n\n" + "全体: " + JSON.stringify(data, null, 2));
+                },
+                error : function(data) {
+                    // Error
+                    alert("error");
+                    $("#response").html(JSON.stringify(data));
+                }
+            });
+        })
+
+        $("#regist").click( function(){
+            var url = "https://www.mycryptoheroes.net/experimental-api/plusmeta/heroes/" + $("#heroid").val();
+
+            var JSONdata = {
+                "iss": $("#iss").val(),
+                "metadata": {
+                    "name": "test man",
+                    "description": "てすとですよ",
+                    "attributes": {
+                        "hackathon_online_team": $("#hackathon_online_team").val()
+                    }
+                }
+            };
+
+            if (!confirm("以下の内容で登録しますか？\n" + JSON.stringify(JSONdata))) {
+                return;
+            }
+
+            $.ajax({
+                type : 'post',
+                url : url,
+                data : JSON.stringify(JSONdata),
+                contentType: 'application/json',
+                dataType : 'json',
+                scriptCharset: 'utf-8',
+                success : function(data) {
+                    // Success
+                    alert("success");
+                    $("#response").html(JSON.stringify(data));
+                    
+                    // 登録したデータを表示
+                    $("#view").click();
+                },
+                error : function(data) {
+                    // Error
+                    alert("error");
+                    $("#response").html(JSON.stringify(data));
+                }
+            });
+        })
+    })
+</script>
+</head>
+
+<body>
+    <h1>マイクリハッカソン ヒーローへのパラメータ追加</h1>
+    <p>ヒーローID: <input type="text" id="heroid" size="30" value="100199968"></p>
+    <p>実行者のアドレス: <input type="text" id="iss" size="50" value="0xa7075815ab56ca29d851d8c21e9cab1b5712939b"></p>
+    <p><button id="view" type="button">表示</button></p>
+    
+    <textarea id="response" cols=120 rows=20 disabled></textarea>
+    
+    <p>パラメータ(hackathon_online_team): <input type="text" id="hackathon_online_team" size="30" value="test"></p>
+    <p><button id="regist" type="button">登録</button></p>
+</body>
+</html>

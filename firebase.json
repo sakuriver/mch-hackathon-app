@@ -2,7 +2,7 @@
   "hosting": {
     "public": "app",
     "redirects": [ {
-    "source" : "",
+    "source" : "/",
     "destination" : "/login.html",
     "type" : 301
     }],

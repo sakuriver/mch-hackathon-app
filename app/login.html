@@ -8,6 +8,8 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
             crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/pepper-grinder/jquery-ui.css">        
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
     <script src="./js/extension_asset_abi.js"></script>
@@ -15,17 +17,21 @@
     <script src="./js/land_sector_asset_abi.js"></script>
     <script src="./js/mch_meta_marking_abi.js"></script>
     <script src="./js/app_config.js"></script>
+    <script src="./js/network.js"></script>
   </head>
   <body>
     <div id="message">
       <h1>MchHackツール</h1>
+      <div id="loginDialog" style="display:none;">
+        <p>ethアドレスとユーザーidが確認できませんでした。</p>
+      </div>
       <div> 
         <h2>ログイン画面</h2>
         <form id="hero-search-form" method="" action="">
           <p>
             <label>
               ethアドレス<input type="text" name="ownerAddress" id="ownerAddress" class="txtfiled" placeholder="0x..."><br/>
-              ユーザーid<input type="text" name="ownerAddress" id="ownerAddress" class="txtfiled" placeholder="">
+              ユーザーid<input type="text" name="uid" id="uid" class="txtfiled" placeholder="">
             </label>
           </p>          
           <button type="submit">ログイン</button>
@@ -53,17 +59,19 @@
                // userAccount = accounts[0];
                // $("#login-address").text(userAccount);
               // contractのxxxxを叩いて動作確認
-              extensionAsset = getExtensionAssetContract();
-              heroAsset = getHeroAssetContract();
-              landSectorAsset = getLandSectorAssetContract();
-              mchMetaMarking = getMchMetaMarkingContract();
-              console.log(heroAsset.methods);
-              console.log(heroAsset.tokenURI);
               
             });
 
             console.log("app end");
 
+        }
+
+        function loginCheckError() {
+            $("#loginDialog").dialog({
+                modal:true,
+                title:"ログインエラー",
+                buttons: {"OK": function() {$(this).dialog("close");}}
+            });
         }
         // 英雄及びプレイヤー情報を検索する
         $("#hero-search-form").submit(function(){
@@ -71,68 +79,25 @@
             var ownerAddress = $("#ownerAddress").val();
             var now = new Date();
             getUserProfileData(ownerAddress);
-            getHeroListFromOwnerAddress(ownerAddress);
             console.log("searchEnd");
             return false;
         });
-        function getHeroListFromOwnerAddress(ownerAddress) {
-            heroAsset.balanceOf(ownerAddress, (err, result) =>{
-                console.log(err);
-                console.log(result);
-                for (var i = 0; i < result.c[0];  i++) {
-                  heroAsset.tokenOfOwnerByIndex(ownerAddress, i, (err, result) => {
-                      getTokenData(result.c[0]);
-                  });
-                }
-            });
-        }        
-
-        function getTokenData(tokenId) {
-            heroAsset.tokenURI(tokenId, (err, result) =>{
-                console.log(err);
-                console.log(result);   
-                data = connectServerGetMethod(result);
-                if (typeof data !== 'undefined') {
-                    divString = '<div id="token-data-' + data.attributes.id + '"><div>';
-                    divString += data.name + '</div>';
-                    divString += '<img  src="' + data.image + '" width="80" height="80"/>' + '</div>';
-                    console.log(divString);
-                    var div = $(divString);
-                    $("#hero-result").append(div);
-                }
-                return data
-            });
-        }
 
         // サイドチェーンから、プロフィール情報を取得する
         function getUserProfileData(ethAddress) {
             userProfileUrl = sideChainEndPointUrl + "users/" + ethAddress;
             console.log(userProfileUrl);
-            connectServerGetMethod(userProfileUrl);
-        }
 
-        // GET通信を実施する
-        function connectServerGetMethod(apiUrl) {
-                $.ajax({  
-                    url:apiUrl, // 通信先のURL
-                    type:"GET",    // 使用するHTTPメソッド
-                    dataType : 'JSON',                  
-                    scriptCharset: 'utf-8', 
-                    crossDomain: true,
-                    timespan:1000     // 通信のタイムアウトの設定(ミリ秒)
-                }).done(function(data, textStatus, jqXHR) {
-                    console.log(data);
-                   
-                    return data;
-                    // 6. failは、通信に失敗した時に実行される
-                }).fail(function(jqXHR, textStatus, errorThrown ) {
-                    console.log(jqXHR);
+            profileData = connectServerGetMethod(userProfileUrl);
+            if (typeof data === 'undefined') {
+                //
+                loginCheckError();
+                return
+            } else {
+               console.log(profileData);
+               // 入力情報が一致しているかを確認する
 
-                    // 7. alwaysは、成功/失敗に関わらず実行される
-                }).always(function(){
-                        
-                });
-                return undefined;
+            }
         }
 
         window.addEventListener('load', function() {
