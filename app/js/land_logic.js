@@ -1,8 +1,7 @@
 // ランド名の取得ロジック
 function getLandNameByLandType(landType) {
-    if (landType == 0) {
-        landName = "Zentrale";
-    } else if (landType == 1) {
+    // ランド名を判定
+    if (landType == 1) {
         landName = "Ocean";
     } else if (landType == 2) {
         landName = "Strawberry";

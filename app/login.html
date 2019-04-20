@@ -21,7 +21,7 @@
   </head>
   <body>
     <div id="message">
-      <h1>MchHackツール</h1>
+      <h1>ランドメンバーのヒーロー展示場 入場画面</h1>
       <div id="loginDialog" style="display:none;">
         <p>ethアドレスとユーザーidが確認できませんでした。</p>
       </div>
@@ -105,6 +105,7 @@
                         loginCheckError();
                         return;
                    }
+
                    $.cookie("uid", data.uid, { expires: 7 });
                    $.cookie("ethAddress", ethAddress, { expires: 7 });
                    $.cookie("landType", data.land_type, { expires: 7 });

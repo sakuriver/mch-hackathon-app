@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>マイクリハッカソン ヒーローへのパラメータ追加</title>
+<title>マイクリハッカソン ヒーローのコメント登録ページ</title>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 
 <script type="text/javascript">
@@ -18,22 +18,23 @@
                 dataType : 'json',
                 success : function(data) {
                     // Success
-                    alert("success");
                     var hackathon_online_team = "";
                     // 入力した実行者のアドレスとissが一致するものを表示する
                     for (var i = 0; i < data.issues.length; i++) {
                         var issue = data.issues[i];
-                        if (issue.iss != $("#iss").val()) {
+                        if (issue.iss.toString() != $("#iss").val().toLowerCase()) {
                             continue;
                         }
-                        hackathon_online_team = JSON.stringify(issue.metadata.attributes.hackathon_online_team);
+                        if ('attributes' in issue.metadata && 'hackathon_online_team' in issue.metadata.attributes) {
+                            hackathon_online_team = issue.metadata.attributes.hackathon_online_team.toString();
+                        }
                         break;
                     }
-                    $("#response").html("パラメータ(hackathon_online_team): " + hackathon_online_team + "\n\n" + "全体: " + JSON.stringify(data, null, 2));
+                    $("#response").html("ヒーローのコメント(hackathon_online_team): " + hackathon_online_team + "\n\n" + "全体: " + JSON.stringify(data, null, 2));
                 },
                 error : function(data) {
                     // Error
-                    alert("error");
+                    alert("失敗！！");
                     $("#response").html(JSON.stringify(data));
                 }
             });
@@ -43,10 +44,10 @@
             var url = "https://www.mycryptoheroes.net/experimental-api/plusmeta/heroes/" + $("#heroid").val();
 
             var JSONdata = {
-                "iss": $("#iss").val(),
+                "iss": $("#iss").val().toLowerCase(),
                 "metadata": {
-                    "name": "test man",
-                    "description": "てすとですよ",
+                    "name": "",
+                    "description": "",
                     "attributes": {
                         "hackathon_online_team": $("#hackathon_online_team").val()
                     }
@@ -61,20 +62,19 @@
                 type : 'post',
                 url : url,
                 data : JSON.stringify(JSONdata),
-                contentType: 'application/json',
+                contentType : 'application/json',
                 dataType : 'json',
                 scriptCharset: 'utf-8',
                 success : function(data) {
                     // Success
-                    alert("success");
-                    $("#response").html(JSON.stringify(data));
+                    alert("成功しました");
                     
                     // 登録したデータを表示
                     $("#view").click();
                 },
                 error : function(data) {
                     // Error
-                    alert("error");
+                    alert("失敗！！");
                     $("#response").html(JSON.stringify(data));
                 }
             });
@@ -84,14 +84,14 @@
 </head>
 
 <body>
-    <h1>マイクリハッカソン ヒーローへのパラメータ追加</h1>
-    <p>ヒーローID: <input type="text" id="heroid" size="30" value="100199968"></p>
-    <p>実行者のアドレス: <input type="text" id="iss" size="50" value="0xa7075815ab56ca29d851d8c21e9cab1b5712939b"></p>
+    <h1>マイクリハッカソン ヒーローのコメント登録ページ</h1>
+    <p>ヒーローのID: <input type="text" id="heroid" size="10" value=""></p>
+    <p>実行者のethアドレス: <input type="text" id="iss" size="45" value="" placeholder="0x..."></p>
     <p><button id="view" type="button">表示</button></p>
     
     <textarea id="response" cols=120 rows=20 disabled></textarea>
     
-    <p>パラメータ(hackathon_online_team): <input type="text" id="hackathon_online_team" size="30" value="test"></p>
+    <p>ヒーローのコメント: <input type="text" id="hackathon_online_team" size="50" value=""></p>
     <p><button id="regist" type="button">登録</button></p>
 </body>
 </html>

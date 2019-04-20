@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mch Tool</title>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -19,11 +21,14 @@
     <script src="./js/network.js"></script>
   </head>
   <body>
-    <div id="message">
-      <h1>ランド内ヒーロー議論部屋</h1>
+    <div class="container my-5">
+      <h1>ランドメンバーのヒーロー展示場</h1>
       <div> 
         <h3>ランド名</h3>
         <div id="land-name"></div>
+        <h3>メンバーリスト</h3>
+        <div id="user-result">
+        </div>    
         <h3>メンバー毎のヒーロー一覧</h3>
         <div id="hero-result">
         </div>
@@ -89,9 +94,15 @@
               heroAsset = getHeroAssetContract();
               landSectorAsset = getLandSectorAssetContract();
               mchMetaMarking = getMchMetaMarkingContract();
+              $("#user-result").empty();
+              $("#hero-result").empty();
               landType = $.cookie("landType");
               landSince = $.cookie("landSince");
-              $("#land-name").html(getLandNameByLandType(landType));
+              if (typeof landType === 'undefined')  {
+                  $("#land-name").html("Zentrale");
+              } else {
+                  $("#land-name").html(getLandNameByLandType(landType));
+              }
               getUserListFromLand(landType, landSince);
               console.log(heroAsset.methods);
               console.log(heroAsset.tokenURI);
@@ -99,39 +110,81 @@
             console.log("app end");
 
         }
-        // 英雄及びプレイヤー情報を検索する
-        $("#hero-search-form").submit(function(){
-            console.log("searchStart");
-            var ownerAddress = $("#ownerAddress").val();
-            var now = new Date();
-            getUserProfileData(ownerAddress);
-            getHeroListFromOwnerAddress(ownerAddress);
-            console.log("searchEnd");
-            return false;
-        });
         function getUserListFromLand(landType, landSince) {
             mchMetaMarking.getAddressesByLandType(landType, landSince, (err, result) =>{
                 console.log(err);
                 console.log(result);
+                for (var i = 0; i < result.length;  i++) {
+                    createUserResult(result[i]);
+                    getHeroListFromOwnerAddress(result[i]);
+                }
+            });
+        }
+        function getHeroListFromOwnerAddress(ownerAddress) {
+            heroAsset.balanceOf(ownerAddress, (err, result) =>{
+                console.log(err);
+                console.log(result);
+                for (var i = 0; i < result.c[0];  i++) {
+                  heroAsset.tokenOfOwnerByIndex(ownerAddress, i, (err, result) => {
+                      getTokenData(result.c[0]);
+                  });
+                }
             });
         }        
 
-        function getTokenData(tokenId) {
-            heroAsset.tokenURI(tokenId, (err, result) =>{
-                console.log(err);
-                console.log(result);   
-                data = connectServerGetMethod(result, getDataCallBack);
-                if (typeof data !== 'undefined') {
-                    divString = '<div id="token-data-' + data.attributes.id + '"><div>';
-                    divString += data.name + '</div>';
-                    divString += '<img  src="' + data.image + '" width="80" height="80"/>' + '</div>';
+
+        function createUserResult(ethAddress) {
+            userProfileUrl = sideChainEndPointUrl + "users/" + ethAddress;
+            var getDataCallBack = function (data, textStatus, jqXHR) {
+                if (typeof data === 'undefined') {
+                    //
+                    loginCheckError();
+                    return
+                } else {
+                   console.log(data);
+                    divString = '<div id="box_' + data.uid + '" class="card bg-primary text-white my-1">';
+                    divString += '<div class="card-body">' +"#"  + data.uid + ":" + data.name + '</div>';
+                    divString += '</div>';
                     console.log(divString);
                     var div = $(divString);
-                    $("#hero-result").append(div);
+                    $("#user-result").append(div);
+                   // 入力情報が一致しているかを確認する
                 }
-                return data
-            });
+            };
+            var getDataFailCallBack = function (data, textStatus, jqXHR) {
+                loginCheckError();
+                return;
+            };            
+            connectServerGetMethod(userProfileUrl, getDataCallBack, getDataFailCallBack);
+        }        
+
+        function getTokenData(tokenId) {
+            tokenUri = "https://www.mycryptoheroes.net/metadata/hero/" + tokenId;
+            var getDataCallBack = function (data, textStatus, jqXHR) {
+                if (typeof data === 'undefined') {
+                    //
+                    loginCheckError();
+                    return
+                } else {
+                   if (typeof data !== 'undefined') {
+                        divString = '<div id="token-data-' + data.attributes.id + '"" class="card bg-primary text-white my-1"><div>名前:';
+                        divString += data.name + '</div>';
+                        divString += '<div>説明文:' + data.description + '</div>';
+                        divString += '<div>lv :' + data.attributes.lv + '</div>';
+                        divString += '<img  src="' + data.image + '" width="80" height="80"/>' + '</div>';
+                        console.log(divString);
+                        var div = $(divString);
+                        $("#hero-result").append(div);
+                    }
+                }
+            };
+            var getDataFailCallBack = function (data, textStatus, jqXHR) {
+                loginCheckError();
+                return;
+            };                   
+            data = connectServerGetMethod(tokenUri, getDataCallBack, getDataFailCallBack);                
         }
+
 
         // サイドチェーンから、プロフィール情報を取得する
         function getUserProfileData(ethAddress) {
