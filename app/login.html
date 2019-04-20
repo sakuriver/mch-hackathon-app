@@ -107,6 +107,8 @@
                    }
                    $.cookie("uid", data.uid, { expires: 7 });
                    $.cookie("ethAddress", ethAddress, { expires: 7 });
+                   $.cookie("landType", data.land_type, { expires: 7 });
+                   $.cookie("landSince", data.land_since, { expires: 7 });
                    window.location.href = '/index.html';
                    // 入力情報が一致しているかを確認する
                 }

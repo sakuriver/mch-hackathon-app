@@ -19,17 +19,11 @@
   </head>
   <body>
     <div id="message">
-      <h1>MchHackツール</h1>
+      <h1>ランド内ヒーロー議論部屋</h1>
       <div> 
-        <h2>アドレス別ヒーロー一覧</h2>
-        <form id="hero-search-form" method="" action="">
-          <p>
-            <label><span>Id</span>
-              <input type="text" name="ownerAddress" id="ownerAddress" class="txtfiled" placeholder="検索アドレス">
-            </label>
-          </p>          
-          <button type="submit">検索</button>
-        </form>
+        <h3>ランド名</h3>
+        <div id="land-name"></div>
+        <h3>メンバー毎のヒーロー一覧</h3>
         <div id="hero-result">
         </div>
       </div>  
@@ -79,6 +73,8 @@
 
         function startApp() {
             console.log("app start");
+            console.log($.cookie("landType"));
+            console.log($.cookie("landSince"));
 
             // ユーザーアカウントの取得
             web3js.eth.getAccounts(function(error, accounts) {
