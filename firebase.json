@@ -1,0 +1,15 @@
+{
+  "hosting": {
+    "public": "app",
+    "redirects": [ {
+    "source" : "",
+    "destination" : "/login.html",
+    "type" : 301
+    }],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

@@ -10,27 +10,26 @@
             crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
-    <script src="../js/extension_asset_abi.js"></script>
-    <script src="../js/hero_asset_abi.js"></script>
-    <script src="../js/land_sector_asset_abi.js"></script>
-    <script src="../js/mch_meta_marking_abi.js"></script>
-    <script src="../js/app_config.js"></script>
+    <script src="./js/extension_asset_abi.js"></script>
+    <script src="./js/hero_asset_abi.js"></script>
+    <script src="./js/land_sector_asset_abi.js"></script>
+    <script src="./js/mch_meta_marking_abi.js"></script>
+    <script src="./js/app_config.js"></script>
   </head>
   <body>
     <div id="message">
       <h1>MchHackツール</h1>
       <div> 
-        <h2>アドレス別ヒーロー一覧</h2>
+        <h2>ログイン画面</h2>
         <form id="hero-search-form" method="" action="">
           <p>
-            <label><span>Id</span>
-              <input type="text" name="ownerAddress" id="ownerAddress" class="txtfiled" placeholder="検索アドレス">
+            <label>
+              ethアドレス<input type="text" name="ownerAddress" id="ownerAddress" class="txtfiled" placeholder="0x..."><br/>
+              ユーザーid<input type="text" name="ownerAddress" id="ownerAddress" class="txtfiled" placeholder="">
             </label>
           </p>          
-          <button type="submit">検索</button>
+          <button type="submit">ログイン</button>
         </form>
-        <div id="hero-result">
-        </div>
       </div>  
     </div>
 
@@ -40,41 +39,6 @@
         let heroAsset;
         let landSectorAsset;
         let mchMetaMarking;
-
-        // エクステンションコントラクトを取得する
-        function getExtensionAssetContract() {
-            const abi = extensionAssetAbi;
-            // Todo : abiはサーバーとアドレスはサーバーから取得できるようにするのが自然かと思われる
-            const contractAddress = extensionAssetAddress;
-            const contract = web3js.eth.contract(abi).at(contractAddress);
-            return contract;
-        }
-
-
-        function getHeroAssetContract() {
-            const abi = heroAssetAbi;
-            // Todo : abiはサーバーとアドレスはサーバーから取得できるようにするのが自然かと思われる
-            const contractAddress = heroAssetAddress;
-            const contract = web3js.eth.contract(abi).at(contractAddress);
-            return contract;
-        }
-
-        function getLandSectorAssetContract() {
-            const abi = landSectorAssetAbi;
-            // Todo : abiはサーバーとアドレスはサーバーから取得できるようにするのが自然かと思われる
-            const contractAddress = landSectorAssetAddress;
-            const contract = web3js.eth.contract(abi).at(contractAddress);
-            return contract;
-        }
-
-        function getMchMetaMarkingContract() {
-            const abi = mchMetaMarkingAbi;
-            // Todo : abiはサーバーとアドレスはサーバーから取得できるようにするのが自然かと思われる
-            const contractAddress = mchMetaMarkingAddress;
-            const contract = web3js.eth.contract(abi).at(contractAddress);
-            return contract;
-        }
-
 
         function startApp() {
             console.log("app start");
