@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ランドメンバーのヒーロー展示場</title>
+<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/pepper-grinder/jquery-ui.css">        
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
+<script src="./js/extension_asset_abi.js"></script>
+<script src="./js/hero_asset_abi.js"></script>
+<script src="./js/land_sector_asset_abi.js"></script>
+<script src="./js/mch_meta_marking_abi.js"></script>
+<script src="./js/app_config.js"></script>
+<script src="./js/network.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#response").html("結果表示エリア");
+
+        $("#view").click( function(){
+            var url = "https://www.mycryptoheroes.net/experimental-api/plusmeta/heroes/" + $("#heroid").val();
+
+            $.ajax({
+                type : 'get',
+                url : url,
+                dataType : 'json',
+                success : function(data) {
+                    // Success
+                    var hackathon_online_team = "";
+                    // 入力した実行者のアドレスとissが一致するものを表示する
+                    for (var i = 0; i < data.issues.length; i++) {
+                        var issue = data.issues[i];
+                        if (issue.iss.toString() != $("#iss").val().toLowerCase()) {
+                            continue;
+                        }
+                        if ('attributes' in issue.metadata && 'hackathon_online_team' in issue.metadata.attributes) {
+                            hackathon_online_team = issue.metadata.attributes.hackathon_online_team.toString();
+                        }
+                        break;
+                    }
+                    $("#response").html("ヒーローのコメント(hackathon_online_team): " + hackathon_online_team + "\n\n" + "全体: " + JSON.stringify(data, null, 2));
+                },
+                error : function(data) {
+                    // Error
+                    alert("失敗！！");
+                    $("#response").html(JSON.stringify(data));
+                }
+            });
+        })
+
+        $("#regist").click( function(){
+            var url = "https://www.mycryptoheroes.net/experimental-api/plusmeta/heroes/" + $("#heroid").val();
+
+            var JSONdata = {
+                "iss": $("#iss").val().toLowerCase(),
+                "metadata": {
+                    "name": "",
+                    "description": "",
+                    "attributes": {
+                        "hackathon_online_team": $("#hackathon_online_team").val()
+                    }
+                }
+            };
+
+            if (!confirm("以下の内容で登録しますか？\n" + JSON.stringify(JSONdata))) {
+                return;
+            }
+
+            $.ajax({
+                type : 'post',
+                url : url,
+                data : JSON.stringify(JSONdata),
+                contentType : 'application/json',
+                dataType : 'json',
+                scriptCharset: 'utf-8',
+                success : function(data) {
+                    // Success
+                    alert("成功しました");
+                    
+                    // 登録したデータを表示
+                    $("#view").click();
+                },
+                error : function(data) {
+                    // Error
+                    alert("失敗！！");
+                    $("#response").html(JSON.stringify(data));
+                }
+            });
+        })
+    })
+</script>
+</head>
+
+<body>
+    <h1>ランドメンバーのヒーロー展示場 ヒーローの詳細情報</h1>
+
+    <>
+
+
+    <p>ヒーローのID: <input type="text" id="heroid" readonly=readonly value=""></p>
+    <p>実行者のethアドレス: <input type="text" id="iss" size="45" value="" placeholder="0x..."></p>
+    <p><button id="view" type="button">表示</button></p>
+    
+    <textarea id="response" cols=120 rows=20 disabled></textarea>
+    
+    <p>ヒーローのコメント: <input type="text" id="hackathon_online_team" size="50" value=""></p>
+    <p><button id="regist" type="button">登録</button></p>
+
+</body>
+</html>
