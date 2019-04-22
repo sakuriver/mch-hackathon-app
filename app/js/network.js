@@ -16,8 +16,13 @@ function connectServerGetMethod(apiUrl, successCallBack, failCallBack) {
             console.log(jqXHR);
             return failCallBack(data, textStatus, jqXHR);
             // 7. alwaysは、成功/失敗に関わらず実行される
-    }).always(function(){
+       }
+    ).always(function(){
             
     });
     return undefined;
+}
+
+function getHeroTokenUri(tokenId) {
+	return tokenUri = "https://www.mycryptoheroes.net/metadata/hero/" + tokenId;
 }

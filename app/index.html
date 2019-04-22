@@ -6,7 +6,7 @@
     <title>Mch Tool</title>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./css/default.css?version=1">
+    <link rel="stylesheet" href="./css/default.css?version=3">
 
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -20,7 +20,7 @@
     <script src="./js/mch_meta_marking_abi.js"></script>
     <script src="./js/app_config.js"></script>
     <script src="./js/land_logic.js"></script>
-    <script src="./js/network.js"></script>
+    <script src="./js/network.js?version=1"></script>
   </head>
   <body>
     <div class="container my-5">
@@ -173,35 +173,37 @@
         }        
 
         function getTokenDataAndcreateDisplay(tokenId) {
-            tokenUri = "https://www.mycryptoheroes.net/metadata/hero/" + tokenId;
             var getDataCallBack = function (data, textStatus, jqXHR) {
                 if (typeof data === 'undefined') {
                     //
                     loginCheckError();
                     return
                 } else {
-                   if (typeof data !== 'undefined') {
-                        addElementId = "token-data-" + data.attributes.id;
-                        divString = '<div id="' + addElementId + '" class="card bg-primary text-white my-1 hero-list"><div>名前:';
-                        divString += data.name + '</div>';
-                        divString += '<div>説明文:' + data.description + '</div>';
-                        divString += '<div>lv :' + data.attributes.lv + '</div>';
-                        divString += '<img  src="' + data.image + '" width="80" height="80"/>' + '</div>';
-                        console.log(divString);                      
-                        console.log(divString);
-                        var div = $(divString);
-                        $("#hero-result").append(div);
-                        $("#" + addElementId).on('click', function(){
-                            window.location.href = "https://mch-other-project.firebaseapp.com/heroDetail.html?heroId=" + tokenId;
-                        });                        
+                    if (typeof data !== 'undefined') {
+                        createHeroDiv(data);
                     }
                 }
             };
             var getDataFailCallBack = function (data, textStatus, jqXHR) {
-                loginCheckError();
                 return;
             };                   
-            data = connectServerGetMethod(tokenUri, getDataCallBack, getDataFailCallBack);                
+            data = connectServerGetMethod(getHeroTokenUri(tokenId), getDataCallBack, getDataFailCallBack);                
+        }
+
+        function createHeroDiv(data) {
+            addElementId = "token-data-" + data.attributes.id;
+            divString = '<div id="' + addElementId + '" class="card bg-primary text-white my-1 hero-list"><div>名前:';
+            divString += data.name + '</div>';
+            divString += '<div>説明文:' + data.description + '</div>';
+            divString += '<div>lv :' + data.attributes.lv + '</div>';
+            divString += '<img  src="' + data.image + '" width="80" height="80"/>' + '</div>';
+            console.log(divString);                      
+            console.log(divString);
+            var div = $(divString);
+            $("#hero-result").append(div);
+            $("#" + addElementId).on('click', function(){
+                window.location.href = "https://mch-other-project.firebaseapp.com/heroDetail.html?heroId=" + data.tokenId;
+            });
         }
 
 
