@@ -92,17 +92,55 @@
                 }
             });
         })
+        getHero(getUrlParameter("heroId"));
     })
+    function getHero(tokenId) {
+            getTokenDataAndcreateDisplay(tokenId);
+    }
+    function getTokenDataAndcreateDisplay(tokenId) {
+        var getDataCallBack = function (data, textStatus, jqXHR) {
+            if (typeof data === 'undefined') {
+                //
+                loginCheckError();
+                return
+            } else {
+                if (typeof data !== 'undefined') {
+                    createHeroDiv(data);
+                }
+            }
+        };
+        var getDataFailCallBack = function (data, textStatus, jqXHR) {
+            return;
+        };                   
+        data = connectServerGetMethod(getHeroTokenUri(tokenId), getDataCallBack, getDataFailCallBack);                
+    }
+
+    function createHeroDiv(data) {
+        addElementId = "token-data-" + data.attributes.id;
+        divString = '<div id="heroId" class="card bg-primary text-white my-1 hero-list" value="'; 
+        divString += data.attributes.id + '"><div>名前:';
+        divString += data.name + '</div>';
+        divString += '<div>説明文:' + data.description + '</div>';
+        divString += '<div>lv :' + data.attributes.lv + '</div>';
+        divString += '<img  src="' + data.image + '" width="160" height="160"/>' + '</div>';
+        $("#heroid").val(data.attributes.id);       
+        console.log(divString);                      
+        console.log(divString);
+        var div = $(divString);
+        $("#detail-info").append(div);
+    }
 </script>
 </head>
 
 <body>
     <h1>ランドメンバーのヒーロー展示場 ヒーローの詳細情報</h1>
 
-    <>
+    <div id="detail-info">
+
+    </div>
 
 
-    <p>ヒーローのID: <input type="text" id="heroid" readonly=readonly value=""></p>
+    <p>ヒーローのID: <input type="text" id="heroid" readonly="readonly" value=""></p>
     <p>実行者のethアドレス: <input type="text" id="iss" size="45" value="" placeholder="0x..."></p>
     <p><button id="view" type="button">表示</button></p>
     

@@ -192,7 +192,8 @@
 
         function createHeroDiv(data) {
             addElementId = "token-data-" + data.attributes.id;
-            divString = '<div id="' + addElementId + '" class="card bg-primary text-white my-1 hero-list"><div>名前:';
+            divString = '<div id="' + addElementId + '" class="card bg-primary text-white my-1 hero-list" value="'; 
+            divString += data.attributes.id + '"><div>名前:';
             divString += data.name + '</div>';
             divString += '<div>説明文:' + data.description + '</div>';
             divString += '<div>lv :' + data.attributes.lv + '</div>';
@@ -202,7 +203,8 @@
             var div = $(divString);
             $("#hero-result").append(div);
             $("#" + addElementId).on('click', function(){
-                window.location.href = "https://mch-other-project.firebaseapp.com/heroDetail.html?heroId=" + data.tokenId;
+                var heroId =  $(this).attr("value");
+                window.location.href = "https://mch-other-project.firebaseapp.com/heroDetail.html?heroId=" + heroId;
             });
         }
 

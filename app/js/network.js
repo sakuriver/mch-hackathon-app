@@ -23,6 +23,18 @@ function connectServerGetMethod(apiUrl, successCallBack, failCallBack) {
     return undefined;
 }
 
+// ヒーローのトークン取得用のURLを設定
 function getHeroTokenUri(tokenId) {
 	return tokenUri = "https://www.mycryptoheroes.net/metadata/hero/" + tokenId;
+}
+
+// 指定したキーについて、URLに付加されている値を追加	
+function getUrlParameter(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
