@@ -124,6 +124,7 @@
 
                     createUserResult(result[i]);
                     getHeroListFromOwnerAddress(result[i]);
+                    getExtensionListFromOwnerAddress(result[i]);
                 }
             });
         }
@@ -135,7 +136,19 @@
                   heroAsset.tokenOfOwnerByIndex(ownerAddress, i, (err, heroResult) => {
                       console.log(result);
                       console.log(heroResult);
-                      getTokenDataAndcreateDisplay(heroResult.c[0]);
+                      getHeroDataAndcreateDisplay(heroResult.c[0]);
+                      sleep(3);
+                  });
+                }
+            });
+        }
+        function getExtensionListFromOwnerAddress(ownerAddress) {
+            extensionAsset.balanceOf(ownerAddress, (err, result) => {
+                for (var i = 0; i < result.c[0];  i++) {
+                  heroAsset.tokenOfOwnerByIndex(ownerAddress, i, (err, extensionResult) => {
+                      console.log(result);
+                      console.log(extensionResult);
+                      getExtensionDataAndcreateDisplay(extensionResult.c[0]);
                       sleep(3);
                   });
                 }
@@ -174,7 +187,7 @@
             connectServerGetMethod(userProfileUrl, getDataCallBack, getDataFailCallBack);
         }        
 
-        function getTokenDataAndcreateDisplay(tokenId) {
+        function getHeroDataAndcreateDisplay(tokenId) {
             var getDataCallBack = function (data, textStatus, jqXHR) {
                 if (typeof data === 'undefined') {
                     //
@@ -191,6 +204,26 @@
             };                   
             data = connectServerGetMethod(getHeroTokenUri(tokenId), getDataCallBack, getDataFailCallBack);                
         }
+
+        function getExtensionDataAndcreateDisplay(tokenId) {
+            var getDataCallBack = function (data, textStatus, jqXHR) {
+                if (typeof data === 'undefined') {
+                    //
+                    loginCheckError();
+                    return
+                } else {
+                    if (typeof data !== 'undefined') {
+                       // createHeroDiv(data);
+                    }
+                }
+            };
+            var getDataFailCallBack = function (data, textStatus, jqXHR) {
+                return;
+            };                   
+            data = connectServerGetMethod(getExtensionTokenUri(tokenId), getDataCallBack, getDataFailCallBack);                
+        }
+
+
 
         function createHeroDiv(data) {
             addElementId = "token-data-" + data.attributes.id;

@@ -28,6 +28,11 @@ function getHeroTokenUri(tokenId) {
 	return tokenUri = "https://www.mycryptoheroes.net/metadata/hero/" + tokenId;
 }
 
+// エクステンションのトークン取得用のURLを設定
+function getExtensionTokenUri(tokenId) {
+    return tokenUri = "https://www.mycryptoheroes.net/metadata/extension/" + tokenId;
+}
+
 // 指定したキーについて、URLに付加されている値を追加	
 function getUrlParameter(name, url) {
     if (!url) url = window.location.href;
