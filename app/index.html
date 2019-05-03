@@ -6,7 +6,7 @@
     <title>Mch Tool</title>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./css/default.css?version=3">
+    <link rel="stylesheet" href="./css/default.css?version=4">
 
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -25,20 +25,33 @@
     <script src="/__/firebase/init.js"></script>
   </head>
   <body>
-    <div class="container my-5">
-      <h1>ランドメンバーのヒーロー展示場</h1>
-      <div> 
-        <h3>ランド名</h3>
-        <div id="land-name"></div>
-        <h3>メンバーリスト</h3>
-        <div id="user-result">
-        </div>    
-        <h3>メンバー毎のヒーロー一覧</h3>
-        <div id="hero-result">
+    <ul class="tab-list">
+        <!--タブ-->
+        <li class="tab is-active">ヒーロー展示場</li>
+        <li class="tab">ランドメンバー名簿</li>
+        <li class="tab">エクステンション展示場</li>
+    </ul>
+    <div class="main">
+        <!--タブを切り替えて表示するコンテンツ-->
+        <div class="content is-show">
+            <div class="container my-5">
+              <div> 
+                <h3>ランド名</h3>
+                <div id="land-name"></div>
+                </div>    
+                <h3>ヒーロー一覧</h3>
+                <div id="hero-result">
+                </div>
+              </div>  
+            </div>
         </div>
-      </div>  
+        <div class="content">
+            <h3>メンバーリスト</h3>
+            <div id="user-result">
+        </div>    
+        <div class="content">
+        </div>
     </div>
-
     <script>
         let web3js;
         let extensionAsset;
@@ -242,6 +255,15 @@
                 window.location.href = "https://mch-other-project.firebaseapp.com/heroDetail.html?heroId=" + heroId;
             });
         }
+        $('.tab').click(function(){
+            $('.tab.is-active').removeClass('is-active');
+            $(this).addClass('is-active');
+            $(".content.is-show").removeClass('is-show');
+            // クリックしたタブからインデックス番号を取得
+            const index = $(this).index();
+            // クリックしたタブと同じインデックス番号をもつコンテンツを表示
+            $(".content").eq(index).addClass('is-show');
+        });
 
 
         // サイドチェーンから、プロフィール情報を取得する
