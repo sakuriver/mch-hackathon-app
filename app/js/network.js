@@ -28,6 +28,12 @@ function getHeroTokenUri(tokenId) {
 	return tokenUri = "https://www.mycryptoheroes.net/metadata/hero/" + tokenId;
 }
 
+// ヒーローの一覧情報取得用のURLを設定
+function getHeroAppListUri(userId) {
+    return "https://www.mycryptoheroes.net/experimental-api/proxy/mch/heroes/" + userId;
+}
+
+
 // エクステンションのトークン取得用のURLを設定
 function getExtensionTokenUri(tokenId) {
     return tokenUri = "https://www.mycryptoheroes.net/metadata/extension/" + tokenId;

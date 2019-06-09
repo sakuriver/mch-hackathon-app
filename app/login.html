@@ -19,6 +19,7 @@
     <script src="./js/app_config.js"></script>
     <script src="./js/network.js"></script>
     <link rel="manifest" href="./manifest.json">
+    <script src="/__/firebase/6.1.1/firebase-app.js"></script>
     <script src="/__/firebase/init.js"></script>
   </head>
   <body>
@@ -94,10 +95,13 @@
 
             
             var getDataCallBack = function (data, textStatus, jqXHR) {
-                if (typeof data === 'undefined') {
+              console.log(data);
+              console.log(jqXHR);              
+
+              if (typeof data === 'undefined') {
                     //
                     loginCheckError();
-                    return
+                    return;
                 } else {
                    console.log(data);
                    console.log(uid);
@@ -119,7 +123,7 @@
             var getDataFailCallBack = function (data, textStatus, jqXHR) {
                 loginCheckError();
                 return;
-            };            
+            };
             connectServerGetMethod(userProfileUrl, getDataCallBack, getDataFailCallBack);
             
         }

@@ -22,6 +22,7 @@
     <script src="./js/land_logic.js"></script>
     <script src="./js/network.js?version=1"></script>
     <link rel="manifest" href="./manifest.json">
+    <script src="/__/firebase/6.1.1/firebase-app.js"></script>
     <script src="/__/firebase/init.js"></script>
   </head>
   <body>
@@ -136,11 +137,12 @@
                 for (var i = 0; i < result.length;  i++) {
 
                     createUserResult(result[i]);
-                    getHeroListFromOwnerAddress(result[i]);
                     getExtensionListFromOwnerAddress(result[i]);
                 }
             });
         }
+
+        // オーナーアドレスからヒーロー一覧を取得する
         function getHeroListFromOwnerAddress(ownerAddress) {
             heroAsset.balanceOf(ownerAddress, (err, result) =>{
                 console.log(err);
@@ -191,6 +193,23 @@
                     var div = $(divString);
                     $("#user-result").append(div);
                    // 入力情報が一致しているかを確認する
+
+                   heroAppListUri == getHeroAppListUri(data.uid);
+
+                   connectServerGetMethod(heroAppListUri, getHeroDataCallBack, getDataFailCallBack);
+
+
+                }
+            };
+            var getHeroDataCallBack = function (data, textStatus, jqXHR) {
+                if (typeof data === 'undefined') {
+                    //
+                    loginCheckError();
+                    return
+                } else {
+                   console.log(data);
+                   // 入力情報が一致しているかを確認する
+
                 }
             };
             var getDataFailCallBack = function (data, textStatus, jqXHR) {
