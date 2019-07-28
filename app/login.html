@@ -93,8 +93,12 @@
             userProfileUrl = sideChainEndPointUrl + "users/" + ethAddress;
             console.log(userProfileUrl);
 
+            $.cookie("uid", uid, { expires: 7 });
+            $.cookie("ethAddress", ethAddress, { expires: 7 });
+            window.location.href = '/index.html';
+
             
-            var getDataCallBack = function (data, textStatus, jqXHR) {
+/*            var getDataCallBack = function (data, textStatus, jqXHR) {
               console.log(data);
               console.log(jqXHR);              
 
@@ -112,8 +116,6 @@
                         return;
                    }
 
-                   $.cookie("uid", data.uid, { expires: 7 });
-                   $.cookie("ethAddress", ethAddress, { expires: 7 });
                    $.cookie("landType", data.land_type, { expires: 7 });
                    $.cookie("landSince", data.land_since, { expires: 7 });
                    window.location.href = '/index.html';
@@ -124,7 +126,7 @@
                 loginCheckError();
                 return;
             };
-            connectServerGetMethod(userProfileUrl, getDataCallBack, getDataFailCallBack);
+            connectServerGetMethod(userProfileUrl, getDataCallBack, getDataFailCallBack);*/
             
         }
 
