@@ -35,6 +35,7 @@
     <div class="main">
         <!--タブを切り替えて表示するコンテンツ-->
         <div class="content is-show">
+            <!-- コンテンツタイトルヘッダー -->
             <div class="container my-5">
               <div> 
                 <h3>ランド名</h3>
@@ -71,7 +72,7 @@
             return contract;
         }
 
-
+        // ヒーローアセットのコントラクトを取得する
         function getHeroAssetContract() {
             const abi = heroAssetAbi;
             // Todo : abiはサーバーとアドレスはサーバーから取得できるようにするのが自然かと思われる
@@ -256,7 +257,7 @@
         }
 
 
-
+        // ヒーロー情報を生成する
         function createHeroDiv(data) {
             addElementId = "token-data-" + data.attributes.id;
             divString = '<div id="' + addElementId + '" class="card bg-primary text-white my-1 hero-list" value="'; 
