@@ -55,6 +55,7 @@
         })
 
         $("#regist").click( function(){
+            // mchの再度チェーン側のplusmetaapiを呼び出す
             var url = "https://www.mycryptoheroes.net/experimental-api/plusmeta/heroes/" + $("#heroid").val();
 
             var JSONdata = {
@@ -68,6 +69,7 @@
                 }
             };
 
+            // コメント情報の追加用ダイアログ
             if (!confirm("以下の内容で登録しますか？\n" + JSON.stringify(JSONdata))) {
                 return;
             }
@@ -95,13 +97,14 @@
         })
         getHero(getUrlParameter("heroId"));
     })
+    // スマートコントラクト側のトークンIdを使用して、ヒーロー情報を取得
     function getHero(tokenId) {
             getTokenDataAndcreateDisplay(tokenId);
     }
     function getTokenDataAndcreateDisplay(tokenId) {
         var getDataCallBack = function (data, textStatus, jqXHR) {
             if (typeof data === 'undefined') {
-                //
+                //　サイドチェーンへの問い合わせでエラー
                 loginCheckError();
                 return
             } else {
@@ -138,17 +141,19 @@
 <body>
     <h1>ランドメンバーのヒーロー展示場 ヒーローの詳細情報</h1>
 
+    <!-- 検索内容表示項目 -->
     <div id="detail-info">
 
     </div>
 
-
+    <!-- 検索フォーム -->
     <p>ヒーローのID: <input type="text" id="heroid" readonly="readonly" value=""></p>
     <p>実行者のethアドレス: <input type="text" id="iss" size="45" value="" placeholder="0x..."></p>
     <p><button id="view" type="button">表示</button></p>
     
     <textarea id="response" cols=120 rows=20 disabled></textarea>
     
+    <!-- ヒーローのコメント情報登録 -->
     <p>ヒーローのコメント: <input type="text" id="hackathon_online_team" size="50" value=""></p>
     <p><button id="regist" type="button">登録</button></p>
 
